@@ -1,4 +1,4 @@
-name: CI/CD App2 - LAMP (WordPress + MariaDB + Adminer + PortRacker)
+name: CI/CD App2 - LAMP (WordPress + MariaDB + Adminer + Portracker)
 
 on:
   push:
@@ -12,22 +12,26 @@ jobs:
   ci-cd:
     runs-on: ubuntu-latest
     env:
-      DOCKER_IMAGE: ${{ secrets.DOCKER_HUB_USERNAME }}/wordpress-ci:latest
+      DOCKER_IMAGE: yaspi97/app-tree
 
     steps:
+      # 1. Récupération du code
       - name: Checkout du code
         uses: actions/checkout@v4
 
+      # 2. Vérifier que Docker est installé
       - name: Vérifier Docker installé
         run: |
           docker --version
           docker compose version || true
 
+      # 3. Lancer la stack avec Docker Compose
       - name: Lancer la stack avec Docker Compose
         run: |
           cd app2
           docker compose up -d --build
 
+      # 4. Attendre que MySQL (MariaDB) soit prêt
       - name: Attendre que MySQL soit prêt
         run: |
           cd app2
@@ -37,27 +41,34 @@ jobs:
             sleep 5
           done
 
+      # 5. Tester que les services répondent
       - name: Tester les services
         run: |
-          curl -f http://localhost:8080 || exit 1
-          curl -f http://localhost:8081 || exit 1
-          curl -f http://localhost:7070 || exit 1
+          curl -f http://localhost:8080 || exit 1   # WordPress
+          curl -f http://localhost:8081 || exit 1   # Adminer
+          curl -f http://localhost:7070 || exit 1   # Portracker
           docker ps -a
 
+      # 6. Construire et tagger l'image WordPress custom
       - name: Construire et tagger l'image WordPress custom
         run: |
           cd app2
-          docker build -t $DOCKER_IMAGE .
+          docker build -t $DOCKER_IMAGE:latest -t $DOCKER_IMAGE:${GITHUB_SHA::7} .
 
+      # 7. Connexion à Docker Hub
       - name: Connexion à Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
+      # 8. Push de l'image sur Docker Hub
       - name: Push de l'image sur Docker Hub
-        run: docker push $DOCKER_IMAGE
+        run: |
+          docker push $DOCKER_IMAGE:latest
+          docker push $DOCKER_IMAGE:${GITHUB_SHA::7}
 
+      # 9. Nettoyage des conteneurs
       - name: Nettoyage
         if: always()
         run: |
