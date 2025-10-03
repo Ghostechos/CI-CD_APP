@@ -70,5 +70,5 @@ EOF
 
       # 5. Vérification post-déploiement
       - name: Vérifier que le site répond
-        run: |
+        run:
           curl -I http://${{ secrets.SSH_HOST }} || exit 1
