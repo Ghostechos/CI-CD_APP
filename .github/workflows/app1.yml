@@ -46,7 +46,7 @@ jobs:
             sudo chown -R $USER:$USER /var/www/app
 
             if [ ! -f /etc/nginx/sites-available/app ]; then
-              sudo bash -c "cat > /etc/nginx/sites-available/app" << 'EOL'
+              sudo tee /etc/nginx/sites-available/app > /dev/null <<'EOF'
 server {
     listen 80;
     server_name _;
@@ -56,7 +56,7 @@ server {
         try_files \$uri \$uri/ =404;
     }
 }
-EOL
+EOF
               sudo ln -sf /etc/nginx/sites-available/app /etc/nginx/sites-enabled/app
             fi
 
