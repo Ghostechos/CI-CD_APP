@@ -40,11 +40,18 @@ jobs:
               sudo apt install -y nginx
             fi
 
-            sudo mkdir -p /var/www/app1
-            sudo chown -R $USER:$USER /var/www/app1
-
             if [ ! -f /etc/nginx/sites-available/app ]; then
-              sudo bash -c "echo 'server { listen 80; server_name _; root /var/www/app1; index index.html; location / { try_files \$uri \$uri/ =404; } }' > /etc/nginx/sites-available/app"
+              sudo bash -c "cat > /etc/nginx/sites-available/app" <<'EOF'
+server {
+    listen 80;
+    server_name _;
+    root /var/www/app1;
+    index index.html;
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
+EOF
               sudo ln -sf /etc/nginx/sites-available/app /etc/nginx/sites-enabled/app
               sudo rm -f /etc/nginx/sites-enabled/default
             fi
