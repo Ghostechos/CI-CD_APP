@@ -11,18 +11,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Récupération du code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Génération d’un fichier version.txt
       - name: Générer un fichier version.txt
         run: |
           echo "Application: App1" > app1/version.txt
           echo "Date: $(date)" >> app1/version.txt
           echo "Commit: $GITHUB_SHA" >> app1/version.txt
 
-      # 3. Copier uniquement app1/ vers le serveur
       - name: Déployer les fichiers sur le serveur
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -33,7 +30,6 @@ jobs:
           source: "./app1/*"
           target: "/var/www/app"
 
-      # 4. Configurer Nginx si besoin + reload
       - name: Configurer et recharger Nginx
         uses: appleboy/ssh-action@v1.2.0
         with:
@@ -50,7 +46,7 @@ jobs:
             sudo chown -R $USER:$USER /var/www/app
 
             if [ ! -f /etc/nginx/sites-available/app ]; then
-              sudo bash -c 'cat > /etc/nginx/sites-available/app <<EOF
+              sudo bash -c "cat > /etc/nginx/sites-available/app" << 'EOL'
 server {
     listen 80;
     server_name _;
@@ -60,14 +56,13 @@ server {
         try_files \$uri \$uri/ =404;
     }
 }
-EOF'
+EOL
               sudo ln -sf /etc/nginx/sites-available/app /etc/nginx/sites-enabled/app
             fi
 
             sudo nginx -t
             sudo systemctl reload nginx || sudo systemctl restart nginx
 
-      # 5. Vérification post-déploiement
       - name: Vérifier que le site répond
         run: |
           curl -I http://${{ secrets.SSH_HOST }} || exit 1
