@@ -1,61 +1,90 @@
-Objectif du projet
+# Objectif du projet
 
-L’objectif est de mettre en place une chaîne CI/CD avec GitHub Actions pour deux applications distinctes :
+L’objectif est de mettre en place une chaîne **CI/CD avec GitHub Actions** pour deux applications distinctes :
 
-App1 : un site statique (HTML/CSS/JS) déployé automatiquement sur un serveur Linux via SSH (accessible publiquement).
-
-App2 : une stack LAMP (WordPress + Apache + MariaDB + Adminer) conteneurisée, construite et publiée sous forme d’image Docker sur le GitHub Container Registry (GHCR).
+- **App1** : un site statique (HTML/CSS/JS) déployé automatiquement sur un serveur Linux via SSH et servi publiquement avec **Nginx**.  
+- **App2** : une stack **LAMP** (WordPress + MariaDB + Adminer) conteneurisée avec Docker, destinée à être construite et publiée sous forme d’image Docker sur **Docker Hub**.
 
 Cette démarche permet d’automatiser :
 
-l’intégration du code,
+- l’intégration du code,
+- la validation par des tests,
+- le déploiement sur un environnement de préproduction/production.
 
-la validation par des tests,
+---
 
-le déploiement sur un environnement de préproduction/production,
+## 📂 Structure du projet
+
 .
-├── app1/                         # Site statique
-│   ├── index.html
+├── app1/ # Site statique
+│ └── index.html
 │
-├── app2/                         # Stack LAMP
-│   ├── Dockerfile
-│   ├── docker-compose.yml
+├── app2/ # Stack LAMP
+│ ├── Dockerfile
+│ ├── docker-compose.yml
 │
 └── .github/workflows/
-    ├── app1.yml	           # CI/CD pour App1
-    └── app2_registry.yml         # CI/CD pour App2
+├── app1.yml # CI/CD pour App1
+└── app2.yml # CI/CD pour App2
 
 
-Déploiement de App1
+
+---
+
+## ✅ Déploiement de App1
 
 App1 est une application statique (site HTML) déployée automatiquement avec GitHub Actions et servie via Nginx.
 
-Problèmes rencontrés et solutions
+Le pipeline réalise :  
+1. Transfert des fichiers via **SCP** sur le serveur distant.  
+2. Installation/configuration de **Nginx** si nécessaire.  
+3. Suppression de la configuration par défaut (`/etc/nginx/sites-enabled/default`).  
+4. Création d’une configuration dédiée pointant vers `/var/www/app1`.  
+5. Redémarrage de Nginx et vérification de l’accessibilité du site.  
 
-Connexion SSH refusée
+👉 Résultat : le site est fonctionnel et accessible depuis le serveur.
 
-Problème : Le serveur demandait un mot de passe.
+---
 
-Solution : Ajout de la clé publique dans authorized_keys et configuration des secrets GitHub (SSH_PRIVATE_KEY, SSH_HOST, SSH_USER, SSH_PORT).
+## ⚠️ App2
 
-Erreur YAML dans le workflow
+- App2 n’a pas encore été déployé complètement.  
+- Toutefois, tous les fichiers nécessaires sont déjà présents dans ce dépôt :  
+  - `Dockerfile` (pour personnaliser WordPress),  
+  - `docker-compose.yml` (WordPress, MariaDB, Adminer),  
+  - Workflow GitHub Actions (`app2.yml`) qui :  
+    - construit et teste la stack,  
+    - publie l’image Docker sur **Docker Hub** (`yaspi97/app-tree`).  
 
-Problème : Le fichier .github/workflows/app1.yml ne passait pas la validation.
+👉 Le pipeline est donc prêt, mais le déploiement final n’a pas encore été effectué.
 
-Cause : La configuration Nginx était écrite en multi-lignes et cassait l’indentation.
+---
 
-Solution : Utilisation d’un echo ou d’un cat <<EOF pour générer correctement la configuration.
+## 🚧 Problèmes rencontrés & Solutions
 
-Page par défaut Nginx
+### 1. Connexion SSH refusée (App1)
+- **Problème** : Le serveur demandait encore un mot de passe.  
+- **Cause** : La clé publique n’était pas ajoutée.  
+- **Solution** : Ajout de la clé publique dans `~/.ssh/authorized_keys` du serveur et configuration des secrets GitHub (`SSH_PRIVATE_KEY`, `SSH_HOST`, `SSH_USER`, `SSH_PORT`).  
 
-Problème : Après déploiement, l’IP affichait encore la page par défaut de Nginx.
+### 2. Erreur YAML dans le workflow (App1)
+- **Problème** : Le fichier `.github/workflows/app1.yml` ne passait pas la validation.  
+- **Cause** : La configuration Nginx multi-lignes cassait l’indentation YAML.  
+- **Solution** : Utilisation d’un `echo` (ou `cat <<EOF`) pour écrire correctement la configuration dans `/etc/nginx/sites-available/app`.  
 
-Solution : Le workflow supprime systématiquement /etc/nginx/sites-enabled/default et active la configuration app.
+### 3. Page par défaut Nginx
+- **Problème** : L’IP affichait encore la page par défaut de Nginx.  
+- **Cause** : Le fichier `/etc/nginx/sites-enabled/default` était encore actif.  
+- **Solution** : Suppression automatique de ce fichier dans le workflow.  
 
-Erreur 404 Not Found
+### 4. Erreur 404 Not Found
+- **Problème** : Nginx ne trouvait pas `index.html`.  
+- **Cause** : La directive `root` pointait vers `/var/www/app` au lieu de `/var/www/app1`.  
+- **Solution** : Correction de la configuration pour `root /var/www/app1;`.  
 
-Problème : Nginx ne trouvait pas index.html.
+---
 
-Cause : Le chemin root pointait vers /var/www/app au lieu de /var/www/app1.
+## 📝 Remarque finale
 
-Solution : Modification de la configuration Nginx pour utiliser root /var/www/app1.
+- **App1 est terminé et fonctionnel.**  
+- **App2 n’a pas encore été déployé**, mais tous les fichiers nécessaires sont présents dans ce dépôt.  
