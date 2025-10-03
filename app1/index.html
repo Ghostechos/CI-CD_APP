@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>DevOpsCorp - Experts DevOps</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --primary: #0ea5e9;  /* bleu clair */
+      --secondary: #1e293b; /* bleu foncé */
+      --bg: #f8fafc; /* gris clair */
+      --text: #334155;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    header {
+      background: linear-gradient(135deg, var(--secondary), #334155);
+      color: white;
+      padding: 3rem 1rem;
+      text-align: center;
+    }
+    .logo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+    }
+    .logo svg {
+      width: 80px; height: 80px;
+      fill: var(--primary);
+    }
+    h1 {
+      font-size: 2.8rem;
+      margin-bottom: .2rem;
+    }
+    h2 {
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: #cbd5e1;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: auto;
+      padding: 2rem;
+    }
+    section {
+      margin-bottom: 3rem;
+    }
+    p.intro {
+      font-size: 1.2rem;
+      text-align: center;
+      margin: 2rem auto;
+      max-width: 800px;
+    }
+
+    /* Équipe */
+    .team {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .member {
+      background: white;
+      border-radius: 12px;
+      width: 260px;
+      text-align: center;
+      padding: 1.5rem;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+    }
+    .member:hover { transform: translateY(-8px); }
+    .avatar {
+      width: 90px; height: 90px;
+      border-radius: 50%;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.6rem;
+      margin: 0 auto 1rem;
+      font-weight: bold;
+    }
+    .member h3 { margin-bottom: .3rem; color: var(--secondary); }
+    .member p { color: #64748b; font-size: 0.95rem; }
+
+    /* Services & Projets */
+    .services h2, .projects h2 {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 2rem;
+      color: var(--secondary);
+    }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+    .service {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      transition: transform .3s;
+    }
+    .service:hover { transform: translateY(-5px); }
+    .service svg {
+      width: 40px; height: 40px;
+      margin-bottom: .5rem;
+      fill: var(--primary);
+    }
+    .service h3 { margin-bottom: .5rem; }
+
+    footer {
+      background: var(--secondary);
+      color: #94a3b8;
+      text-align: center;
+      padding: 1.2rem;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <!-- Logo intégré en SVG -->
+    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="32" cy="32" r="30" fill="#1e293b" stroke="#0ea5e9" stroke-width="4"/>
+      <path d="M20 32a12 12 0 0 1 24 0 12 12 0 0 1-24 0z" fill="#0ea5e9"/>
+      <circle cx="32" cy="32" r="6" fill="white"/>
+    </svg>
+    <div>
+      <h1>DevOpsCorp</h1>
+      <h2>Experts Admin & DevOps</h2>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- Intro -->
+  <section>
+    <p class="intro">
+      Nous sommes une équipe de trois administrateurs DevOps passionnés.  
+      Notre mission : accompagner les entreprises dans la mise en place d’infrastructures modernes, fiables et sécurisées.
+    </p>
+  </section>
+
+  <!-- Équipe -->
+  <section class="team">
+    <div class="member">
+      <div class="avatar">P</div>
+      <h3>Piyas</h3>
+      <p>Admin DevOps</p>
+    </div>
+    <div class="member">
+      <div class="avatar">S</div>
+      <h3>Sofiane</h3>
+      <p>Ingénieur Systèmes & Réseaux</p>
+    </div>
+    <div class="member">
+      <div class="avatar">C</div>
+      <h3>Chafaa</h3>
+      <p>Ingénieur Systèmes</p>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="services">
+    <h2>Nos services</h2>
+    <div class="services-grid">
+      <div class="service">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        <h3>CI/CD</h3>
+        <p>Intégration et déploiement continu pour des releases rapides et fiables.</p>
+      </div>
+      <div class="service">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l-5.5 9h11L12 2zm0 20c-2.7 0-5-2.3-5-5h10c0 2.7-2.3 5-5 5z"/></svg>
+        <h3>Cloud</h3>
+        <p>Déploiement et gestion sur AWS, Azure ou GCP.</p>
+      </div>
+      <div class="service">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 4L2 20h20L12 4z"/></svg>
+        <h3>Containers</h3>
+        <p>Docker, Kubernetes et orchestration de microservices.</p>
+      </div>
+      <div class="service">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14h2v-2h14v2h2V5c0-1.1-.9-2-2-2zm0 10H5V5h14v8z"/></svg>
+        <h3>Sécurité</h3>
+        <p>Monitoring, alerting et durcissement des systèmes.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projets -->
+  <section class="projects">
+    <h2>Projets réalisés</h2>
+    <div class="services-grid">
+      <div class="service">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 14h-2v-2h2v2zm0-4h-2V7h2v5z"/></svg>
+        <h3>MDM</h3>
+        <p>Mise en place d’une solution de Mobile Device Management pour sécuriser et administrer un parc mobile.</p>
+      </div>
+      <div class="service">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6l9-4 9 4v6c0 5-3 9-9 12-6-3-9-7-9-12V6z"/></svg>
+        <h3>Déploiement SaaS</h3>
+        <p>Déploiement et gestion d’applications SaaS sur AWS et autres plateformes cloud.</p>
+      </div>
+      <div class="service">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 4h14v2H5V4zm0 6h14v2H5v-2zm0 6h14v2H5v-2z"/></svg>
+        <h3>CI/CD</h3>
+        <p>Automatisation du cycle de vie applicatif avec pipelines CI/CD et déploiement sans interruption.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  © 2025 DevOpsCorp — 
+  Piyas (Admin DevOps), 
+  Sofiane (Ingénieur Systèmes & Réseaux), 
+  Chafaa (Ingénieur Systèmes).  
+  Tous droits réservés.
+</footer>
+
+</body>
+</html>
