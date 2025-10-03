@@ -11,9 +11,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Récupération du code
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 2. Copier les fichiers vers /var/www/app1 sur le serveur
       - name: Copier les fichiers vers le serveur
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -22,8 +24,9 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           source: "./app1/*"
-          target: "/var/www/app"
+          target: "/var/www/app1"
 
+      # 3. Installer et configurer Nginx si besoin
       - name: Installer et configurer Nginx
         uses: appleboy/ssh-action@v1.2.0
         with:
@@ -37,14 +40,19 @@ jobs:
               sudo apt install -y nginx
             fi
 
-            sudo mkdir -p /var/www/app
-            sudo chown -R $USER:$USER /var/www/app
+            sudo mkdir -p /var/www/app1
+            sudo chown -R $USER:$USER /var/www/app1
 
             if [ ! -f /etc/nginx/sites-available/app ]; then
               sudo bash -c "echo 'server { listen 80; server_name _; root /var/www/app1; index index.html; location / { try_files \$uri \$uri/ =404; } }' > /etc/nginx/sites-available/app"
               sudo ln -sf /etc/nginx/sites-available/app /etc/nginx/sites-enabled/app
+              sudo rm -f /etc/nginx/sites-enabled/default
             fi
 
             sudo nginx -t
             sudo systemctl reload nginx || sudo systemctl restart nginx
-#ok
+
+      # 4. Vérifier que le site répond
+      - name: Vérifier que le site est accessible
+        run: |
+          curl -I http://${{ secrets.SSH_HOST }} || exit 1
