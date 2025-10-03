@@ -49,19 +49,18 @@ jobs:
             sudo mkdir -p /var/www/app
             sudo chown -R $USER:$USER /var/www/app
 
-            # Config Nginx si elle n'existe pas
             if [ ! -f /etc/nginx/sites-available/app ]; then
-              sudo tee /etc/nginx/sites-available/app > /dev/null <<EOF
-              server {
-                  listen 80;
-                  server_name _;
-                  root /var/www/app;
-                  index index.html;
-                  location / {
-                      try_files \$uri \$uri/ =404;
-                  }
-              }
-EOF
+              sudo bash -c 'cat > /etc/nginx/sites-available/app <<EOF
+server {
+    listen 80;
+    server_name _;
+    root /var/www/app;
+    index index.html;
+    location / {
+        try_files \$uri \$uri/ =404;
+    }
+}
+EOF'
               sudo ln -sf /etc/nginx/sites-available/app /etc/nginx/sites-enabled/app
             fi
 
@@ -70,5 +69,5 @@ EOF
 
       # 5. Vérification post-déploiement
       - name: Vérifier que le site répond
-        run:
+        run: |
           curl -I http://${{ secrets.SSH_HOST }} || exit 1
