@@ -22,7 +22,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           source: "./app1/*"
-          target: "/var/www/app1"
+          target: "/var/www/app"
 
       - name: Installer et configurer Nginx
         uses: appleboy/ssh-action@v1.2.0
@@ -41,7 +41,7 @@ jobs:
             sudo chown -R $USER:$USER /var/www/app
 
             if [ ! -f /etc/nginx/sites-available/app ]; then
-              sudo bash -c "echo 'server { listen 80; server_name _; root /var/www/app; index index.html; location / { try_files \$uri \$uri/ =404; } }' > /etc/nginx/sites-available/app"
+              sudo bash -c "echo 'server { listen 80; server_name _; root /var/www/app1; index index.html; location / { try_files \$uri \$uri/ =404; } }' > /etc/nginx/sites-available/app"
               sudo ln -sf /etc/nginx/sites-available/app /etc/nginx/sites-enabled/app
             fi
 
