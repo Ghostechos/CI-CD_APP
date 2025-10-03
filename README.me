@@ -1,0 +1,30 @@
+Objectif du projet
+
+L’objectif est de mettre en place une chaîne CI/CD avec GitHub Actions pour deux applications distinctes :
+
+App1 : un site statique (HTML/CSS/JS) déployé automatiquement sur un serveur Linux via SSH (accessible publiquement).
+
+App2 : une stack LAMP (WordPress + Apache + MariaDB + Adminer) conteneurisée, construite et publiée sous forme d’image Docker sur le GitHub Container Registry (GHCR).
+
+Cette démarche permet d’automatiser :
+
+l’intégration du code,
+
+la validation par des tests,
+
+le déploiement sur un environnement de préproduction/production,
+.
+├── app1/                         # Site statique
+│   ├── index.html
+│   ├── assets/styles.css
+│   └── .htmlhintrc
+│
+├── app2/                         # Stack LAMP
+│   ├── Dockerfile
+│   ├── docker-compose.yml
+│   ├── .env.example
+│   └── tests/smoke.sh
+│
+└── .github/workflows/
+    ├── app1_deploy.yml           # CI/CD pour App1
+    └── app2_registry.yml         # CI/CD pour App2
