@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - master
+    paths:
+      - 'app1/**'
 
 jobs:
   deploy:
