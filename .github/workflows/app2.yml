@@ -1,0 +1,65 @@
+name: CI/CD App2 - LAMP (WordPress + MariaDB + Adminer + PortRacker)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'app2/**'
+  pull_request:
+
+jobs:
+  ci-cd:
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_IMAGE: ${{ secrets.DOCKER_HUB_USERNAME }}/wordpress-ci:latest
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Vérifier Docker installé
+        run: |
+          docker --version
+          docker compose version || true
+
+      - name: Lancer la stack avec Docker Compose
+        run: |
+          cd app2
+          docker compose up -d --build
+
+      - name: Attendre que MySQL soit prêt
+        run: |
+          cd app2
+          for i in {1..12}; do
+            docker compose exec -T db mysql -h127.0.0.1 -uuser -pposeidon -e "SELECT 1" && break
+            echo "Waiting for MySQL..."
+            sleep 5
+          done
+
+      - name: Tester les services
+        run: |
+          curl -f http://localhost:8080 || exit 1
+          curl -f http://localhost:8081 || exit 1
+          curl -f http://localhost:7070 || exit 1
+          docker ps -a
+
+      - name: Construire et tagger l'image WordPress custom
+        run: |
+          cd app2
+          docker build -t $DOCKER_IMAGE .
+
+      - name: Connexion à Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Push de l'image sur Docker Hub
+        run: docker push $DOCKER_IMAGE
+
+      - name: Nettoyage
+        if: always()
+        run: |
+          cd app2
+          docker compose down
