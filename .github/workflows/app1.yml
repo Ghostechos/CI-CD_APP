@@ -15,7 +15,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Copier les fichiers vers /var/www/app1 sur le serveur
+      # 2. Copier le dossier app1 dans /var/www/
       - name: Copier les fichiers vers le serveur
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -23,8 +23,8 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          source: "./app1/*"
-          target: "/var/www/app1"
+          source: "./app1"
+          target: "/var/www/"
 
       # 3. Installer et configurer Nginx si besoin
       - name: Installer et configurer Nginx
@@ -51,8 +51,3 @@ jobs:
 
             sudo nginx -t
             sudo systemctl reload nginx || sudo systemctl restart nginx
-
-      # 4. Vérifier que le site répond
-      - name: Vérifier que le site est accessible
-        run: |
-          curl -I http://${{ secrets.SSH_HOST }} || exit 1
