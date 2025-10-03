@@ -22,7 +22,7 @@ jobs:
           echo "Date: $(date)" >> app1/version.txt
           echo "Commit: $GITHUB_SHA" >> app1/version.txt
 
-      # 3. Copier uniquement le contenu de app1/ vers le serveur
+      # 3. Copier uniquement app1/ vers le serveur
       - name: Déployer les fichiers sur le serveur
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -33,7 +33,7 @@ jobs:
           source: "./app1/*"
           target: "/var/www/app"
 
-      # 4. Configuration Nginx + reload
+      # 4. Configurer Nginx si besoin + reload
       - name: Configurer et recharger Nginx
         uses: appleboy/ssh-action@v1.2.0
         with:
@@ -49,7 +49,7 @@ jobs:
             sudo mkdir -p /var/www/app
             sudo chown -R $USER:$USER /var/www/app
 
-            # Configuration Nginx si non existante
+            # Config Nginx si elle n'existe pas
             if [ ! -f /etc/nginx/sites-available/app ]; then
               sudo tee /etc/nginx/sites-available/app > /dev/null <<EOF
               server {
