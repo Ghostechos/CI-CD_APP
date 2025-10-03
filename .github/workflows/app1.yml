@@ -1,4 +1,4 @@
-name: Déploiement sous Nginx v4
+name: Déploiement App1 - Nginx
 
 on:
   push:
@@ -11,12 +11,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Récupération du code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Copier les fichiers vers le serveur avec SCP
-      - name: Copy files with SCP
+      - name: Copier les fichiers vers le serveur
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -26,8 +24,7 @@ jobs:
           source: "./app1/*"
           target: "/var/www/app"
 
-      # 3. Installer Nginx si besoin et configurer le site
-      - name: Setup Nginx and restart service
+      - name: Installer/Configurer Nginx et recharger
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -44,7 +41,7 @@ jobs:
             sudo chown -R $USER:$USER /var/www/app
 
             if [ ! -f /etc/nginx/sites-available/app ]; then
-              sudo bash -c 'cat > /etc/nginx/sites-available/app <<EOL
+              sudo bash -c 'cat > /etc/nginx/sites-available/app <<EOF
 server {
     listen 80;
     server_name _;
@@ -54,7 +51,7 @@ server {
         try_files \$uri \$uri/ =404;
     }
 }
-EOL'
+EOF'
               sudo ln -sf /etc/nginx/sites-available/app /etc/nginx/sites-enabled/app
             fi
 
