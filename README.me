@@ -16,15 +16,46 @@ le déploiement sur un environnement de préproduction/production,
 .
 ├── app1/                         # Site statique
 │   ├── index.html
-│   ├── assets/styles.css
-│   └── .htmlhintrc
 │
 ├── app2/                         # Stack LAMP
 │   ├── Dockerfile
 │   ├── docker-compose.yml
-│   ├── .env.example
-│   └── tests/smoke.sh
 │
 └── .github/workflows/
-    ├── app1_deploy.yml           # CI/CD pour App1
+    ├── app1.yml	           # CI/CD pour App1
     └── app2_registry.yml         # CI/CD pour App2
+
+
+Déploiement de App1
+
+App1 est une application statique (site HTML) déployée automatiquement avec GitHub Actions et servie via Nginx.
+
+Problèmes rencontrés et solutions
+
+Connexion SSH refusée
+
+Problème : Le serveur demandait un mot de passe.
+
+Solution : Ajout de la clé publique dans authorized_keys et configuration des secrets GitHub (SSH_PRIVATE_KEY, SSH_HOST, SSH_USER, SSH_PORT).
+
+Erreur YAML dans le workflow
+
+Problème : Le fichier .github/workflows/app1.yml ne passait pas la validation.
+
+Cause : La configuration Nginx était écrite en multi-lignes et cassait l’indentation.
+
+Solution : Utilisation d’un echo ou d’un cat <<EOF pour générer correctement la configuration.
+
+Page par défaut Nginx
+
+Problème : Après déploiement, l’IP affichait encore la page par défaut de Nginx.
+
+Solution : Le workflow supprime systématiquement /etc/nginx/sites-enabled/default et active la configuration app.
+
+Erreur 404 Not Found
+
+Problème : Nginx ne trouvait pas index.html.
+
+Cause : Le chemin root pointait vers /var/www/app au lieu de /var/www/app1.
+
+Solution : Modification de la configuration Nginx pour utiliser root /var/www/app1.
