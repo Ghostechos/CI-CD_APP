@@ -22,7 +22,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           source: "./app1/*"
-          target: "/var/www/app"
+          target: "/var/www/app1"
 
       - name: Installer et configurer Nginx
         uses: appleboy/ssh-action@v1.2.0
